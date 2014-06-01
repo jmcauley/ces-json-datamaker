@@ -78,7 +78,7 @@ fs.readFile('./CESsample.json', 'utf8', function (err,data){
     for (var j = 0; j < bin_length; j++){
       var contents_length = jsonData.collection_bins[j].contents.length;
       for (var i = 0; i < contents_length; i++){
-        jsonData.collection_bins[j].contents[i].percentage = Math.round(jsonData.collection_bins[j].contents[i].weight*100)/100; //fix percentages on a per object basis
+        jsonData.collection_bins[j].contents[i].percentage = Math.round(jsonData.collection_bins[j].contents[i].weight/grand_total_weight*100)/100; //fix percentages on a per object basis
       }
       jsonData.collection_bins[j].total_weight = Math.round(jsonData.collection_bins[j].total_weight*100)/100; //fix percentages on collection_bin basis
     }
