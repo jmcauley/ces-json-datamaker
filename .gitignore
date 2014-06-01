@@ -1,4 +1,5 @@
 *.bak
 *.swp
 examples
-created_data
+created_data/*
+.idea
