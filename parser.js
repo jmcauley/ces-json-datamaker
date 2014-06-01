@@ -5,16 +5,18 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function makeRandomJSON(filename, business_type){
+
 fs.readFile('./CESsample.json', 'utf8', function (err,data){
   if(err) throw err
 
   else{
     //jsonData is the json object we're going to deal with to grab data from
     jsonData = JSON.parse(data);
-    
+
+    jsonData.business_type = business_type; //set the business type based on args
 
     //this way we can more accurately make test data to play with, based on waste stream estimates from a weighted point, like stddev
-    var business_type = jsonData.business_type
     var business_weight = 0;
     var max_weight = 0;
     var min_weight = 0;
@@ -87,7 +89,7 @@ fs.readFile('./CESsample.json', 'utf8', function (err,data){
     //yay!
 
     //write all the changes to a file, with a uuid
-    var filename = 'output1.json'
+    //var filename = filename
     var directory = './created_data/'
 
     var outputData = JSON.stringify(jsonData, null, 4);
@@ -101,3 +103,26 @@ fs.readFile('./CESsample.json', 'utf8', function (err,data){
   } //end else block
 });
 
+}
+
+//call the function to make random JSON
+
+//example:
+//node parser.js 100 Restaurant
+
+console.log("So you want ", process.argv[2], "new JSON objects to be made.\n", "And of type ", process.argv[3]);
+
+
+//TODO should to some error checking here
+var business_type = process.argv[3];
+var number_new_json = process.argv[2]; //get the amount of new files to make
+
+if(business_type != undefined && number_new_json > 0){ //basic erro checking, could be better
+
+  //create the new JSON objects
+  for (var i = 0; i < number_new_json; i++){ 
+    var filename = business_type + i + '.json';
+    makeRandomJSON(filename, business_type);
+  }
+
+}
