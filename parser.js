@@ -45,10 +45,9 @@ fs.readFile('./CESsample.json', 'utf8', function (err,data){
       var contents_length = jsonData.collection_bins[j].contents.length;
       //parse each collection_bin separately
       for (var i = 0; i < contents_length; i++){
-        var line = jsonData.collection_bins[j].contents[i].weight;
+        var line = jsonData.collection_bins[j].contents[i].weight = getRandomInt(min_weight,max_weight);
         //TODO take into account weights based on section of the jsonData object
         //if(jsonData.collection_bins[j].name == "Readily Recyclable") something like that
-        line = getRandomInt(min_weight,max_weight);
       }
 
     }
@@ -62,11 +61,9 @@ fs.readFile('./CESsample.json', 'utf8', function (err,data){
     //fix the total weights values
     for (var j = 0; j < bin_length; j++){
       var contents_length = jsonData.collection_bins[j].contents.length;
-      console.log("contents_length is", contents_length);
       var collection_bin_weight = 0;
       for (var i = 0; i < contents_length; i++){
           collection_bin_weight += jsonData.collection_bins[j].contents[i].weight;
-          console.log("growing size....",collection_bin_weight);
       }
       //now set the collection_bin weight
       collection_bin_weight = Math.round(collection_bin_weight*100)/100; //get in terms of two sig figs, ie 24.56 NOT 24.566666666666666
@@ -76,14 +73,31 @@ fs.readFile('./CESsample.json', 'utf8', function (err,data){
     
     grand_total_weight = Math.round(grand_total_weight*100)/100; //fix to two decimal places
     jsonData.grand_total_weight = grand_total_weight;
-
-    console.log(jsonData);
     
     //fix the percentages
+    for (var j = 0; j < bin_length; j++){
+      var contents_length = jsonData.collection_bins[j].contents.length;
+      for (var i = 0; i < contents_length; i++){
+        jsonData.collection_bins[j].contents[i].percentage = Math.round(jsonData.collection_bins[j].contents[i].weight*100)/100; //fix percentages on a per object basis
+      }
+      jsonData.collection_bins[j].total_weight = Math.round(jsonData.collection_bins[j].total_weight*100)/100; //fix percentages on collection_bin basis
+    }
 
+    //now we HAVE NICE DATA!
+    //yay!
 
     //write all the changes to a file, with a uuid
+    var filename = 'output1.json'
+    var directory = './created_data/'
+
+    var outputData = JSON.stringify(jsonData, null, 4);
     
-  }
+    fs.writeFile(directory+filename, outputData, 'utf8', function(err){
+      if(err) return console.log(err);
+      console.log("writing new json data to file", directory+filename);
+    });
+
+    //the end
+  } //end else block
 });
 
