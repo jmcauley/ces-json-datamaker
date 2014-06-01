@@ -5,6 +5,10 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function getRandomDate(start, end) {
+    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+}
+
 function makeRandomJSON(filename, business_type){
 
 fs.readFile('./CESsample.json', 'utf8', function (err,data){
@@ -15,6 +19,9 @@ fs.readFile('./CESsample.json', 'utf8', function (err,data){
     jsonData = JSON.parse(data);
 
     jsonData.business_type = business_type; //set the business type based on args
+
+    //Set the date of the sample to sometime in the last year or so
+    jsonData.collected_on = getRandomDate(new Date(2013,0,1),new Date());
 
     //this way we can more accurately make test data to play with, based on waste stream estimates from a weighted point, like stddev
     var readily_recyclable_weight, compostable_weight, other_recoverable_weight, non_recoverable_weight = 0;
