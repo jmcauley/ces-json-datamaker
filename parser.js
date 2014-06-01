@@ -5,10 +5,7 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function getRandomBusinessType(){
-    var bizTypes = ["Office","Events","Hospitality","Retail","Residential"]
-    return bizTypes[getRandomInt(0,4)];
-}
+function makeRandomJSON(filename, business_type){
 
 fs.readFile('./CESsample.json', 'utf8', function (err,data){
   if(err) throw err
@@ -16,10 +13,10 @@ fs.readFile('./CESsample.json', 'utf8', function (err,data){
   else{
     //jsonData is the json object we're going to deal with to grab data from
     jsonData = JSON.parse(data);
-    
+
+    jsonData.business_type = business_type; //set the business type based on args
 
     //this way we can more accurately make test data to play with, based on waste stream estimates from a weighted point, like stddev
-    var business_type = getRandomBusinessType();
     var business_weight = 0;
     var max_weight = 0;
     var min_weight = 0;
@@ -29,33 +26,20 @@ fs.readFile('./CESsample.json', 'utf8', function (err,data){
         max_weight = 2000;
         min_weight = 0.2;
         break;
-    case "Office":
+    case "Restaurant":
         business_weight = 0.7;
         max_weight = 500;
         min_weight = 0.2;
         break;
-    case "Hospitality":
+    case "Manufacturing":
         business_weight = 1.4;
         max_weight = 10000;
-        min_weight = 0.2;
-        break;
-    case "Events":
-        business_weight = 1.0;
-        max_weight = 2000;
-        min_weight = 0.2;
-        break;
-    case "Residential":
-        business_weight = 1.0;
-        max_weight = 2000;
         min_weight = 0.2;
         break;
     }
     //that way we can weight how data is munged in a second
 
-    //Set the business type
-
-
-    //bin_length doesn't change through each loop, but contents_length does based on the spreadsheet
+    //bin_length doesnt change through each loop, but contents_lenght does based on the spreadhseet
     var bin_length = jsonData.collection_bins.length
 
     //parse each collection_bin with j index
@@ -105,7 +89,7 @@ fs.readFile('./CESsample.json', 'utf8', function (err,data){
     //yay!
 
     //write all the changes to a file, with a uuid
-    var filename = 'output1.json'
+    //var filename = filename
     var directory = './created_data/'
 
     var outputData = JSON.stringify(jsonData, null, 4);
@@ -119,3 +103,26 @@ fs.readFile('./CESsample.json', 'utf8', function (err,data){
   } //end else block
 });
 
+}
+
+//call the function to make random JSON
+
+//example:
+//node parser.js 100 Restaurant
+
+console.log("So you want ", process.argv[2], "new JSON objects to be made.\n", "And of type ", process.argv[3]);
+
+
+//TODO should to some error checking here
+var business_type = process.argv[3];
+var number_new_json = process.argv[2]; //get the amount of new files to make
+
+if(business_type != undefined && number_new_json > 0){ //basic erro checking, could be better
+
+  //create the new JSON objects
+  for (var i = 0; i < number_new_json; i++){ 
+    var filename = business_type + i + '.json';
+    makeRandomJSON(filename, business_type);
+  }
+
+}
