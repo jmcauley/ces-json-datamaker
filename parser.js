@@ -97,7 +97,7 @@ fs.readFile('./CESsample.json', 'utf8', function (err,data){
                 new_weight = getRandomInt(min_weight,max_weight);
 
         }
-        jsonData.collection_bins[j].contents[i].weight = new_weight;
+        jsonData.collection_bins[j].contents[i].weight = Math.round(new_weight*100)/100;
 
       }
 
