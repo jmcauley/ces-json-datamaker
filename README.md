@@ -1,9 +1,10 @@
-JSON parser to take sample data set and make many more fudge dataz.
+JSON parser to take sample JSON data set from Community Environmental Services and make many more 'faked' data so we can work with as much as we want for other applications and databses.
 
 To use:
 
-First you want to install Node.js for you computer. Once you have done that just 'node parser.js' should work :)
+Install node.js.
 
+Basic usage example:
 
 ```
 /Github/cfp-parser$ node parser.js 10 Restaurant
@@ -20,3 +21,5 @@ writing new json data to file ./created_data/Restaurant7.json
 writing new json data to file ./created_data/Restaurant8.json
 writing new json data to file ./created_data/Restaurant9.json
 ```
+
+Where 10 is the number of new json files you want, and Restaurant is the business_type.
