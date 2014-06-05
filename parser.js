@@ -23,10 +23,67 @@ fs.readFile('./CESsample.json', 'utf8', function (err,data){
     //Set the date of the sample to sometime in the last year or so
     jsonData.collected_on = getRandomDate(new Date(2013,0,1),new Date());
 
+    //Randomize the location info within a business type
+    var biz_locations = {
+        retail : [{
+            "latitude": 123, "longitude": 123, "region": "Lloyd Eco District", "zip_code": 97214,
+            "zip_nine": "97214+1234", "is_location_approximate": true, "business_name": "H. Dumpty"
+        }, {
+            "latitude": 123, "longitude": 123, "region": "Lloyd Eco District", "zip_code": 97214,
+            "zip_nine": "97214+1234", "is_location_approximate": true, "business_name": "Megalomart"
+        }, {
+            "latitude": 123, "longitude": 123, "region": "Lloyd Eco District", "zip_code": 97214,
+            "zip_nine": "97214+1234", "is_location_approximate": true, "business_name": "Strickland Propane"
+        }],
+        hospitality : [{
+            "latitude": 123, "longitude": 123, "region": "Lloyd Eco District", "zip_code": 97214,
+            "zip_nine": "97214+1234", "is_location_approximate": true, "business_name": "Bob's Burgers"
+        }, {
+            "latitude": 123, "longitude": 123, "region": "Lloyd Eco District", "zip_code": 97214,
+            "zip_nine": "97214+1234", "is_location_approximate": true, "business_name": "Froyo Yolo"
+        }, {
+            "latitude": 123, "longitude": 123, "region": "Lloyd Eco District", "zip_code": 97214,
+            "zip_nine": "97214+1234", "is_location_approximate": true, "business_name": "Tacky Tiki"
+        }],
+        residential : [{
+            "latitude": 123, "longitude": 123, "region": "Lloyd Eco District", "zip_code": 97214,
+            "zip_nine": "97214+1234", "is_location_approximate": true, "business_name": "House 1"
+        }, {
+            "latitude": 123, "longitude": 123, "region": "Lloyd Eco District", "zip_code": 97214,
+            "zip_nine": "97214+1234", "is_location_approximate": true, "business_name": "House 2"
+        }, {
+            "latitude": 123, "longitude": 123, "region": "Lloyd Eco District", "zip_code": 97214,
+            "zip_nine": "97214+1234", "is_location_approximate": true, "business_name": "House 3"
+        }],
+        office : [{
+            "latitude": 123, "longitude": 123, "region": "Lloyd Eco District", "zip_code": 97214,
+            "zip_nine": "97214+1234", "is_location_approximate": true, "business_name": "Temps n' More"
+        }, {
+            "latitude": 123, "longitude": 123, "region": "Lloyd Eco District", "zip_code": 97214,
+            "zip_nine": "97214+1234", "is_location_approximate": true, "business_name": "Dewey Cheat & Howe, LLP"
+        }, {
+            "latitude": 123, "longitude": 123, "region": "Lloyd Eco District", "zip_code": 97214,
+            "zip_nine": "97214+1234", "is_location_approximate": true, "business_name": "Far Far Away Travel"
+        }],
+        events : [{
+            "latitude": 123, "longitude": 123, "region": "Lloyd Eco District", "zip_code": 97214,
+            "zip_nine": "97214+1234", "is_location_approximate": true, "business_name": "Greek Festival"
+        }, {
+            "latitude": 123, "longitude": 123, "region": "Lloyd Eco District", "zip_code": 97214,
+            "zip_nine": "97214+1234", "is_location_approximate": true, "business_name": "Polish Festival"
+        }, {
+            "latitude": 123, "longitude": 123, "region": "Lloyd Eco District", "zip_code": 97214,
+            "zip_nine": "97214+1234", "is_location_approximate": true, "business_name": "Norse Festival"
+        }]
+    }
+
     //this way we can more accurately make test data to play with, based on waste stream estimates from a weighted point, like stddev
     var readily_recyclable_weight, compostable_weight, other_recoverable_weight, non_recoverable_weight = 0;
     var max_weight = 0;
     var min_weight = 0;
+    var location_info = {};
+    var biznum = getRandomInt(0,2);
+
     switch (business_type) {
     case "Retail":
         readily_recyclable_weight = 5.0;
@@ -35,6 +92,7 @@ fs.readFile('./CESsample.json', 'utf8', function (err,data){
         non_recoverable_weight = 2.0;
         max_weight = 100;
         min_weight = 0.2;
+        location_info = biz_locations.retail[biznum];
         break;
     case "Hospitality":
         readily_recyclable_weight = 1.0;
@@ -43,6 +101,7 @@ fs.readFile('./CESsample.json', 'utf8', function (err,data){
         non_recoverable_weight = 1.0;
         max_weight = 100;
         min_weight = 0.2;
+        location_info = biz_locations.hospitality[biznum];
         break;
     case "Residential":
         readily_recyclable_weight = 0.7;
@@ -51,6 +110,7 @@ fs.readFile('./CESsample.json', 'utf8', function (err,data){
         non_recoverable_weight = 1.2;
         max_weight = 100;
         min_weight = 0.2;
+        location_info = biz_locations.residential[biznum];
         break;
     case "Office":
         readily_recyclable_weight = 3.0;
@@ -59,6 +119,7 @@ fs.readFile('./CESsample.json', 'utf8', function (err,data){
         non_recoverable_weight = 1.0;
         max_weight = 100;
         min_weight = 0.2;
+        location_info = biz_locations.office[biznum];
         break;
     case "Events":
         readily_recyclable_weight = 4.0;
@@ -67,9 +128,13 @@ fs.readFile('./CESsample.json', 'utf8', function (err,data){
         non_recoverable_weight = 2.0;
         max_weight = 100;
         min_weight = 0.2;
+        location_info = biz_locations.events[biznum];
         break;
     }
     //that way we can weight how data is munged in a second
+
+    //set our generated business name
+    jsonData.location = location_info;
 
     //bin_length doesn't change through each loop, but contents_length does based on the spreadsheet
     var bin_length = jsonData.collection_bins.length
