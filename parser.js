@@ -219,24 +219,44 @@ fs.readFile('./CESsample.json', 'utf8', function (err,data){
 
 }
 
+function argumentValidation(business_type,file_quantity){
+
+    if(isNaN(file_quantity) || file_quantity <= 0 || file_quantity > 10000){
+        return false;
+    }
+
+    switch(business_type){
+        case "Retail":
+        case "Hospitality":
+        case "Residential":
+        case "Office":
+        case "Events":
+            return true;
+            break;
+        default:
+            return false;
+    }
+
+}
+
 //call the function to make random JSON
 
 //example:
 //node parser.js 100 Restaurant
 
-console.log("So you want ", process.argv[2], "new JSON objects to be made.\n", "And of type ", process.argv[3]);
-
-
-//TODO should to some error checking here
 var business_type = process.argv[3];
 var number_new_json = process.argv[2]; //get the amount of new files to make
-
-if(business_type != undefined && number_new_json > 0){ //basic error checking, could be better
-
+if(argumentValidation(business_type,number_new_json)){ //basic error checking, could be better
+    console.log("Creating ", process.argv[2], "new JSON objects of type", process.argv[3]);
   //create the new JSON objects
   for (var i = 0; i < number_new_json; i++){ 
     var filename = business_type + i + '.json';
     makeRandomJSON(filename, business_type);
   }
 
+} else {
+    console.log("Invalid arguments.\n " +
+        "\tNumber of Files must be between 0 and 10000. \n" +
+        "\tBusiness Type must be one of Retail, Hospitality, Residential, Office, or Events \n" +
+        "Example: node parser.js 100 Retail");
 }
